@@ -10,7 +10,7 @@ func HandleTodo(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
-
+		todoServices.GetTodos(w, r)
 	case "POST":
 		todoServices.CreateTodo(w, r)
 

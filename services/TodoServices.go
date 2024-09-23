@@ -1,7 +1,9 @@
 package todoServices
 
 import (
+	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -37,4 +39,30 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 	w.WriteHeader(http.StatusCreated)
 
+}
+
+func GetTodos(w http.ResponseWriter, r *http.Request) {
+
+	cursor, err := models.Get()
+
+	if err != nil {
+		http.Error(w, "Error getting todos", http.StatusInternalServerError)
+	}
+
+	var todos []models.Todo
+
+	if err = cursor.All(context.TODO(), &todos); err != nil {
+		log.Fatal(err)
+	}
+
+	response := struct {
+		Message string
+		Todos   []models.Todo
+	}{
+		Message: "Todos fetched successfully!",
+		Todos:   todos,
+	}
+
+	json.NewEncoder(w).Encode(response)
+	w.WriteHeader(http.StatusAccepted)
 }
