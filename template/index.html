@@ -13,6 +13,16 @@
             padding: 20px;
         }
 
+        form {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        input {
+            flex-grow: 2;
+        }
+
         h1 {
             color: #333;
         }
@@ -54,8 +64,26 @@
             cursor: pointer;
         }
 
+        .btn-danger {
+            background-color: red;
+        }
+
+        .btn-danger:hover {
+            background-color: rgb(252, 151, 151);
+        }
+
         button:hover {
             background-color: #45a049;
+        }
+
+        .btn-all-complete {
+            margin-top: 20px;
+            padding: 10px 50px;
+        }
+
+        .btn-all-complete-container {
+            display: flex;
+            flex-direction: row-reverse;
         }
 
         .checkbox-wrapper {
@@ -79,7 +107,10 @@
         <button type="submit">Add TODO</button>
     </form>
 
-    <button class="btn-all-complete">Mark all as complete</button>
+    <div class="btn-all-complete-container">
+        <button class="btn-all-complete">Mark all as complete</button>
+
+    </div>
 
     <h1>TODO List</h1>
 
@@ -93,7 +124,7 @@
             <label for="todo-{{.ID.Hex}}" class="{{if .Completed}}completed{{end}}">{{.Title}}</label>
             <div class="todo-actions">
                 <form style="display: inline;" action='/delete?id={{.ID.Hex}}' method="POST">
-                    <button type="submit">Delete</button>
+                    <button class="btn-danger" type="submit">Delete</button>
                 </form>
             </div>
         </li>

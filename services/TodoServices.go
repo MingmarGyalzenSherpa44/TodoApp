@@ -13,7 +13,6 @@ import (
 
 func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	var newTodo models.Todo
-	// err := json.NewDecoder(r.Body).Decode(&newTodo)
 	err := r.ParseForm()
 
 	if err != nil {
