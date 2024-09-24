@@ -63,6 +63,28 @@ func GetTodos(w http.ResponseWriter, r *http.Request) {
 func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
+	objectId, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if _, err := models.Delete(objectId); err != nil {
+
+		log.Fatal(err)
+
+		return
+	}
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func UpdateTodo(w http.ResponseWriter, r *http.Request) {
+
+	var todo models.Todo
+
+	id := r.URL.Query().Get("id")
+
 	response := struct {
 		Message string
 	}{
@@ -78,15 +100,15 @@ func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := models.Delete(objectId); err != nil {
+	json.NewDecoder(r.Body).Decode(&todo)
 
-		response.Message = "Something went wrong!"
-		json.NewEncoder(w).Encode(response)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	todo.ID = objectId
+
+	if _, err := models.Update(&todo); err != nil {
+
+		log.Fatal(err)
 	}
 
-	response.Message = "Todo Deleted Successfully!"
-	json.NewEncoder(w).Encode(response)
-	w.WriteHeader(http.StatusOK)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+
 }

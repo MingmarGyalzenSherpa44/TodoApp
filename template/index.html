@@ -79,18 +79,19 @@
         <button type="submit">Add TODO</button>
     </form>
 
+    <button>Mark all as complete</button>
+
     <h1>TODO List</h1>
 
     <ul>
         {{range .Todos}}
         <li>
             <div class="checkbox-wrapper">
-                <input type="checkbox" id="todo-{{.ID}}" {{if .Completed}}checked{{end}}
-                    onchange="toggleTodo('{{.ID}}', this.checked)">
+                <input type="checkbox" data-value="{{.Completed}}" class="checkbox" id="todo-{{.ID}}">
             </div>
             <label for="todo-{{.ID}}" class="{{if .Completed}}completed{{end}}">{{.Title}}</label>
             <div class="todo-actions">
-                <form style="display: inline;" action="/delete/{{.ID}}" method="POST">
+                <form style="display: inline;" action='/delete?id={{.ID.Hex}}' method="POST">
                     <button type="submit">Delete</button>
                 </form>
             </div>
@@ -100,13 +101,19 @@
 
 
     <script>
+
+        const checkBoxInputEls = document.querySelectorAll('.checkbox');
+
+        checkBoxInputEls.forEach(checkBoxEl => {
+            checkBoxEl.addEventListener("click", (e) => {
+                console.log(e.target.value);
+            })
+        })
         function toggleTodo(id, completed) {
-            fetch(`/toggle/${id}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `completed=${completed}`
+            console.log("clicked")
+            fetch(`/update?id=${id}`, {
+                method: ' POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', }, body:
+                    `completed=${completed}`
             }).then(() => {
                 const label = document.querySelector(`label[for="todo-${id}"]`);
                 if (completed) {
