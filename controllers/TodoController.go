@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"text/template"
@@ -13,7 +12,6 @@ import (
 
 func HandleTodo(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Printf("%v", r.Method)
 	switch r.Method {
 	case "GET":
 		todoServices.GetTodos(w, r)
@@ -25,8 +23,8 @@ func HandleTodo(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func UpdateTodo(w http.ResponseWriter, r *http.Request) {
-	todoServices.UpdateTodo(w, r)
+func ToggleTodo(w http.ResponseWriter, r *http.Request) {
+	todoServices.ToggleTodo(w, r)
 }
 
 func DeleteTodo(w http.ResponseWriter, r *http.Request) {

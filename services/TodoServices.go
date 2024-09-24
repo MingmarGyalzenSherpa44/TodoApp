@@ -79,11 +79,29 @@ func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func UpdateTodo(w http.ResponseWriter, r *http.Request) {
+func ToggleTodo(w http.ResponseWriter, r *http.Request) {
 
-	var todo models.Todo
+	reqStruct := struct {
+		Completed bool
+	}{}
+	json.NewDecoder(r.Body).Decode(&reqStruct)
 
 	id := r.URL.Query().Get("id")
+
+	if id == "" {
+		if _, err := models.UpdateAll(true); err != nil {
+			log.Fatal(err)
+		}
+
+		json.NewEncoder(w).Encode(struct {
+			Message   string
+			Completed bool
+		}{
+			Message: "Toggle successful",
+		})
+
+		return
+	}
 
 	response := struct {
 		Message string
@@ -100,15 +118,15 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewDecoder(r.Body).Decode(&todo)
-
-	todo.ID = objectId
-
-	if _, err := models.Update(&todo); err != nil {
-
+	if _, err := models.Update(objectId, reqStruct.Completed); err != nil {
 		log.Fatal(err)
 	}
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	json.NewEncoder(w).Encode(struct {
+		Message   string
+		Completed bool
+	}{
+		Message: "Toggle successful",
+	})
 
 }

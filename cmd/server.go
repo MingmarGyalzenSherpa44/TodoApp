@@ -16,9 +16,9 @@ func main() {
 
 	http.HandleFunc("/delete", controller.DeleteTodo)
 
-	http.HandleFunc("/update", controller.UpdateTodo)
+	http.HandleFunc("/toggle", controller.ToggleTodo)
 
-	fmt.Printf("Hello world")
+	fmt.Printf("Server listening on port 8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}

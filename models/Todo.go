@@ -43,9 +43,13 @@ func Delete(_id primitive.ObjectID) (*mongo.DeleteResult, error) {
 	return result, err
 }
 
-func Update(todo *Todo) (*mongo.UpdateResult, error) {
+func Update(id primitive.ObjectID, completed bool) (*mongo.UpdateResult, error) {
 
-	result, err := todoCollection.UpdateByID(context.TODO(), todo.ID, todo)
+	result, err := todoCollection.UpdateByID(context.TODO(), id, bson.M{"$set": bson.M{"completed": completed}})
+	return result, err
+}
 
+func UpdateAll(completed bool) (*mongo.UpdateResult, error) {
+	result, err := todoCollection.UpdateMany(context.TODO(), bson.D{}, bson.M{"$set": bson.M{"completed": completed}})
 	return result, err
 }

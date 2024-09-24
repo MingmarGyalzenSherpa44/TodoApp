@@ -79,7 +79,7 @@
         <button type="submit">Add TODO</button>
     </form>
 
-    <button>Mark all as complete</button>
+    <button class="btn-all-complete">Mark all as complete</button>
 
     <h1>TODO List</h1>
 
@@ -87,9 +87,10 @@
         {{range .Todos}}
         <li>
             <div class="checkbox-wrapper">
-                <input type="checkbox" data-value="{{.Completed}}" class="checkbox" id="todo-{{.ID}}">
+                <input type="checkbox" data-id="{{.ID.Hex}}" data-value="{{.Completed}}" class="checkbox" {{if
+                    .Completed}}checked{{end}} />
             </div>
-            <label for="todo-{{.ID}}" class="{{if .Completed}}completed{{end}}">{{.Title}}</label>
+            <label for="todo-{{.ID.Hex}}" class="{{if .Completed}}completed{{end}}">{{.Title}}</label>
             <div class="todo-actions">
                 <form style="display: inline;" action='/delete?id={{.ID.Hex}}' method="POST">
                     <button type="submit">Delete</button>
@@ -102,26 +103,42 @@
 
     <script>
 
+        const allCompleteBtn = document.querySelector('.btn-all-complete');
         const checkBoxInputEls = document.querySelectorAll('.checkbox');
 
         checkBoxInputEls.forEach(checkBoxEl => {
             checkBoxEl.addEventListener("click", (e) => {
-                console.log(e.target.value);
+                const { id, value } = e.target.dataset;
+                toggleTodo(id, value)
             })
         })
-        function toggleTodo(id, completed) {
-            console.log("clicked")
-            fetch(`/update?id=${id}`, {
-                method: ' POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', }, body:
-                    `completed=${completed}`
-            }).then(() => {
-                const label = document.querySelector(`label[for="todo-${id}"]`);
-                if (completed) {
-                    label.classList.add('completed');
-                } else {
-                    label.classList.remove('completed');
+
+        allCompleteBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            fetch(`/toggle`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json', }, body:
+                    JSON.stringify({ completed: true })
+            }).then(res => {
+                if (res.status === 200) {
+                    window.location.reload();
                 }
-            });
+            })
+        })
+
+        function toggleTodo(id, completed) {
+
+            completed = completed == "true" ? false : true;
+
+            console.log(completed);
+
+            fetch(`/toggle?id=${id}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json', }, body:
+                    JSON.stringify({ completed: true })
+            }).then(res => {
+                if (res.status === 200) {
+                    window.location.reload();
+                }
+            })
         }
     </script>
 </body>
