@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f4f4f4;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .checkbox-wrapper {
+            margin-right: 10px;
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.5);
+            margin-right: 5px;
+        }
+
+        .todo-actions {
+            margin-left: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="/todos" method="POST">
+        <input type="text" name="title" placeholder="Enter a new TODO" required>
+        <button type="submit">Add TODO</button>
+    </form>
+
+    <h1>TODO List</h1>
+
+    <ul>
+        {{range .Todos}}
+        <li>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="todo-{{.ID}}" {{if .Completed}}checked{{end}}
+                    onchange="toggleTodo('{{.ID}}', this.checked)">
+            </div>
+            <label for="todo-{{.ID}}" class="{{if .Completed}}completed{{end}}">{{.Title}}</label>
+            <div class="todo-actions">
+                <form style="display: inline;" action="/delete/{{.ID}}" method="POST">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+        </li>
+        {{end}}
+    </ul>
+
+
+    <script>
+        function toggleTodo(id, completed) {
+            fetch(`/toggle/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `completed=${completed}`
+            }).then(() => {
+                const label = document.querySelector(`label[for="todo-${id}"]`);
+                if (completed) {
+                    label.classList.add('completed');
+                } else {
+                    label.classList.remove('completed');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

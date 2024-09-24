@@ -25,7 +25,7 @@ func init() {
 
 func Create(t *Todo) (*mongo.InsertOneResult, error) {
 
-	result, err := db.Database.Collection("todos").InsertOne(context.TODO(), t)
+	result, err := todoCollection.InsertOne(context.TODO(), t)
 
 	return result, err
 }
@@ -34,5 +34,11 @@ func Get() (*mongo.Cursor, error) {
 
 	result, err := todoCollection.Find(context.TODO(), bson.M{})
 
+	return result, err
+}
+
+func Delete(_id primitive.ObjectID) (*mongo.DeleteResult, error) {
+
+	result, err := todoCollection.DeleteOne(context.TODO(), bson.M{"_id": _id})
 	return result, err
 }

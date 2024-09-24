@@ -13,13 +13,15 @@ import (
 
 func CreateTodo(w http.ResponseWriter, r *http.Request) {
 	var newTodo models.Todo
-	err := json.NewDecoder(r.Body).Decode(&newTodo)
+	// err := json.NewDecoder(r.Body).Decode(&newTodo)
+	err := r.ParseForm()
 
 	if err != nil {
 		http.Error(w, "Invalid Input", http.StatusBadRequest)
 		return
 	}
 
+	newTodo.Title = r.FormValue("title")
 	newTodo.CreatedAt = time.Now()
 	newTodo.Completed = false
 	if result, err := models.Create(&newTodo); err != nil {
@@ -28,16 +30,7 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 		newTodo.ID = result.InsertedID.(primitive.ObjectID)
 	}
 
-	response := struct {
-		Message string
-		Todo    models.Todo
-	}{
-		Message: "Todo created successfully!",
-		Todo:    newTodo,
-	}
-
-	json.NewEncoder(w).Encode(response)
-	w.WriteHeader(http.StatusCreated)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 
 }
 
@@ -65,4 +58,35 @@ func GetTodos(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(response)
 	w.WriteHeader(http.StatusAccepted)
+}
+
+func DeleteTodo(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	response := struct {
+		Message string
+	}{
+		Message: "",
+	}
+
+	objectId, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		response.Message = "Not a valid id!"
+		json.NewEncoder(w).Encode(response)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if _, err := models.Delete(objectId); err != nil {
+
+		response.Message = "Something went wrong!"
+		json.NewEncoder(w).Encode(response)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	response.Message = "Todo Deleted Successfully!"
+	json.NewEncoder(w).Encode(response)
+	w.WriteHeader(http.StatusOK)
 }
