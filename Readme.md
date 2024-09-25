@@ -33,3 +33,7 @@ Welcome to the Todo App! This is a simple server-side rendered (SSR) application
 
     ```bash
     go run cmd/server.go
+
+4. **Open on browser**:
+
+    http://localhost:8080
