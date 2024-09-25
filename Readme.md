@@ -36,4 +36,5 @@ Welcome to the Todo App! This is a simple server-side rendered (SSR) application
 
 4. **Open on browser**:
 
+    ```bash
     http://localhost:8080
