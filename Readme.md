@@ -29,7 +29,7 @@ Welcome to the Todo App! This is a simple server-side rendered (SSR) application
     ```bash
     go get .
 
-3. ##Run the application##:
+3. **Run the application**:
 
     ```bash
     go run cmd/server.go
